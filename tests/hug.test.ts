@@ -1,7 +1,6 @@
-import { queueMap } from "../operators/queueMap";
-import { interval, map, of, timer, zip } from "rxjs";
-import { testScheduler } from "./utils";
+import { timer } from "rxjs";
 import { hug, hugTime } from "../operators/hug";
+import { testScheduler } from "./utils";
 
 describe("hug", () => {
 	it("generates the stream correctly", () => {

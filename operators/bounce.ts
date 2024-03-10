@@ -2,14 +2,32 @@ import {
 	MonoTypeOperatorFunction,
 	Observable,
 	Subscription,
-	debounce,
-	merge,
 	timer,
 } from "rxjs";
 
+/**
+ * A counterpart to `debounce`: Emits only the first event in a series.
+ *
+ * E.g. `bounce(() => timer(3))`:
+ * ```
+ * in:  ab-c---de|
+ * out: a------d-|
+ * ```
+ *
+ * @param durationSelector A function that receives a value from the source
+ * Observable, for computing the timeout duration for each source value,
+ * returned as an Observable.
+ * @param invert Set to `true` to make the operator do the inverse:
+ *
+ *  E.g. `bounce(() => timer(3), true)`:
+ *  ```text
+ *	in:  ab-c---de|
+ * 	out: -b-c----e|
+ *  ```
+ */
 export function bounce<T>(
 	durationSelector: (arg: T) => Observable<any>,
-	invert: boolean = false
+	invert: boolean = false,
 ): MonoTypeOperatorFunction<T> {
 	return (source) => {
 		return new Observable((subscriber) => {
@@ -42,5 +60,8 @@ export function bounce<T>(
 	};
 }
 
+/**
+ * Shortcut for using {@link bounce} with a timer.
+ */
 export const bounceTime = <T>(duration: number, invert: boolean = false) =>
 	bounce<T>(() => timer(duration), invert);

@@ -1,22 +1,40 @@
-import { queueMap } from "../operators/queueMap";
-import { interval, map, of, zip } from "rxjs";
-import { testScheduler } from "./utils";
+import { bufferRing } from "../operators/bufferRing";
+import { of } from "rxjs";
 
-describe("queueMap", () => {
-	it("generates the stream correctly", () => {
-		testScheduler().run((helpers) => {
-			const { cold, time, expectObservable } = helpers;
-			const abc = cold("a---b----(cd|)");
-			const expected = "-----a----(ab)(bc)-(cdd|)";
-			const t = time("  -----|"); // 5
+describe("bufferRing", () => {
+	it("buffer size: 2", () => {
+		let res: number[][] = [];
+		of(1, 2, 3)
+			.pipe(bufferRing(2))
+			.subscribe((r) => res.push(r));
+		expect(res).toStrictEqual([[1], [2, 1], [3, 2]]);
+	});
 
-			expectObservable(
-				abc.pipe(
-					queueMap((val) =>
-						zip(of(val, val), interval(t)).pipe(map((v) => v[0])),
-					),
-				),
-			).toBe(expected);
-		});
+	it("buffer size: 1", () => {
+		let res: number[][] = [];
+		of(1, 2, 3)
+			.pipe(bufferRing(1))
+			.subscribe((r) => res.push(r));
+		expect(res).toStrictEqual([[1], [2], [3]]);
+	});
+
+	it("buffer size: 0", () => {
+		let res: number[][] = [];
+		of(1, 2, 3)
+			.pipe(bufferRing(0))
+			.subscribe((r) => res.push(r));
+		expect(res).toStrictEqual([[], [], []]);
+	});
+
+	it("completes", () => {
+		let completed = false;
+		of(1, 2, 3)
+			.pipe(bufferRing(0))
+			.subscribe({
+				complete: () => {
+					completed = true;
+				},
+			});
+		expect(completed).toBeTruthy();
 	});
 });

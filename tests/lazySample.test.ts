@@ -1,7 +1,6 @@
-import { queueMap } from "../operators/queueMap";
-import { interval, map, of, timer, zip } from "rxjs";
-import { testScheduler } from "./utils";
+import { timer } from "rxjs";
 import { lazySample } from "../operators/lazySample";
+import { testScheduler } from "./utils";
 
 describe("lazySample", () => {
 	it("generates the stream correctly (final value on completion)", () => {
@@ -11,11 +10,7 @@ describe("lazySample", () => {
 			const expected = "a--c---d-(e|)";
 			const t = time("  ---|"); // 3
 
-			expectObservable(
-				abc.pipe(
-					lazySample(() => timer(0, t)),
-				),
-			).toBe(expected);
+			expectObservable(abc.pipe(lazySample(() => timer(0, t)))).toBe(expected);
 		});
 	});
 
@@ -26,11 +21,9 @@ describe("lazySample", () => {
 			const expected = "a--c---d-|";
 			const t = time("  ---|"); // 3
 
-			expectObservable(
-				abc.pipe(
-					lazySample(() => timer(0, t), false),
-				),
-			).toBe(expected);
+			expectObservable(abc.pipe(lazySample(() => timer(0, t), false))).toBe(
+				expected,
+			);
 		});
 	});
 
@@ -41,11 +34,9 @@ describe("lazySample", () => {
 			const expected = "a---|";
 			const t = time("  ---|"); // 3
 
-			expectObservable(
-				abc.pipe(
-					lazySample(() => timer(0, t), false),
-				),
-			).toBe(expected);
+			expectObservable(abc.pipe(lazySample(() => timer(0, t), false))).toBe(
+				expected,
+			);
 		});
 	});
 });
