@@ -1,18 +1,13 @@
-import {
-	MonoTypeOperatorFunction,
-	Observable,
-	debounce,
-	merge,
-	timer,
-} from "rxjs";
+import { MonoTypeOperatorFunction, Observable, merge, timer } from "rxjs";
+import { debounce } from "rxjs/operators";
 import { bounce } from "./bounce";
 
 /**
  * For a series of events that happen in closer succession that the emissions
  * of `durationSelector`, this operator will emit the first and the last event.
- * 
+ *
  * Also, it will emit the pending trailing value if the source completes early.
- * 
+ *
  * E.g. `hug(() => timer(3))`:
  * ```text
  * in:  abc-----d-----ef|
@@ -23,7 +18,7 @@ import { bounce } from "./bounce";
  *                      └- Emits a pending value on source completion
  *                         (like `debounceTime`).
  * ```
- * 
+ *
  * @param durationSelector A function that receives a value from the source
  * Observable, for computing the timeout duration for each source value,
  * returned as an Observable.

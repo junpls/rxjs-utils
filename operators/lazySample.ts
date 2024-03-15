@@ -4,6 +4,8 @@ import {
 	ReplaySubject,
 	concat,
 	defer,
+} from "rxjs";
+import {
 	exhaustMap,
 	filter,
 	finalize,
@@ -11,27 +13,27 @@ import {
 	takeUntil,
 	takeWhile,
 	tap,
-} from "rxjs";
+} from "rxjs/operators";
 
 /**
  * A versatile throttling operator.
- * 
+ *
  * Like the `sample` operator, but it "sleeps" during stretches of silence
  * and "awakes" when the first event in a series occurs.
- * 
+ *
  * This means, you are sure to get...
  *  - the first event of the series (always instantly).
  *  - the final event of the series (potentially delayed).
  *  - a guarantee, that no emissions occur faster than the `durationSelector`(*)
- * 
+ *
  *  (*) unless the source completes and you've set `includeFinal=true`.
- * 
+ *
  * E.g. `lazySample(() => timer(0, 3))`
  * ```text
  * in:  abc----de|
  * out: a--c---d-(e|)
  * ```
- * 
+ *
  * @param notifierSelector A function that receives a value from the source
  * Observable, for computing the timeout duration for each source value,
  * returned as an Observable.
@@ -72,6 +74,9 @@ export function lazySample<T>(
 				),
 			) as Observable<T>;
 
-			return concat(intermediateValues, finalValue.pipe(filter(() => hasValue && includeFinal)));
+			return concat(
+				intermediateValues,
+				finalValue.pipe(filter(() => hasValue && includeFinal)),
+			);
 		});
 }

@@ -4,9 +4,8 @@ import {
 	ReplaySubject,
 	Subject,
 	concatAll,
-	map,
-	takeUntil,
 } from "rxjs";
+import { map, takeUntil } from "rxjs/operators";
 
 /**
  * Like a marriage between `mergeMap` and `concatMap`:

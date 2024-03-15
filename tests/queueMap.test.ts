@@ -1,4 +1,5 @@
-import { interval, map, of, zip } from "rxjs";
+import { interval, of, zip } from "rxjs";
+import { map } from "rxjs/operators";
 import { queueMap } from "../operators/queueMap";
 import { testScheduler } from "./utils";
 
